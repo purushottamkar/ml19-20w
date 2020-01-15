@@ -20,13 +20,14 @@ class Node:
 		self.depth = depth
 		self.stump = stump
 		self.parent = parent
-		# self.featureStumps = featureStumps
 		self.left = None
 		self.right = None
 		self.isLeaf = True
 		self.label = 0
 		self.ancestorSplitFeats = np.empty( [0,], dtype = int )
 		
+	# For feature stumps, return the feature and the threshold used
+	# This method may give unexpected results if used on non-feature stumps e.g. CSVM stumps
 	def extractStumpModel( self ):
 		# First figure out the threshold used in this stump
 		threshold = -self.stump( np.array([0,0])[np.newaxis] )
@@ -44,11 +45,8 @@ class Node:
 			return self.label
 		else:
 			discriminant = self.stump( data )
+			
 			# Else I have to ask one of my children to do the job
-			# if self.featureStumps:
-				# discriminant = data[self.stump[0]] > self.stump[1]
-			# else:
-				# discriminant = data.dot(self.stump[0]) + self.stump[1]
 			if discriminant > 0:
 				return self.right.predict( data )
 			else:
@@ -69,20 +67,18 @@ class Node:
 		else:
 			# This node will be split and hence it is not a leaf
 			self.isLeaf = False
+			
 			# Get the best possible decision stump
 			self.stump = stumpGenerator( X, y, self.ancestorSplitFeats )
 			(feature, threshold) = self.extractStumpModel()
+			
 			self.left = Node( depth = self.depth + 1, parent = self )
 			self.left.ancestorSplitFeats = np.append( self.ancestorSplitFeats, feature )
 			self.right = Node( depth = self.depth + 1, parent = self )
 			self.right.ancestorSplitFeats = np.append( self.ancestorSplitFeats, feature )
+			
 			# Find which points go to my left child and which go to my right child
 			discriminant = self.stump( X )
-			# if self.featureStumps:
-				
-				# discriminant = X[:, self.stump[0]] - self.stump[1]
-			# else:
-				# discriminant = X.dot(self.stump[0]) + self.stump[1]
 			# Train my two children recursively
 			self.left.train( X[discriminant <= 0, :], y[discriminant <= 0], stumpGenerator, maxLeafSize, maxDepth )
 			self.right.train( X[discriminant > 0, :], y[discriminant > 0], stumpGenerator, maxLeafSize, maxDepth )
@@ -104,21 +100,11 @@ class Node:
 				plt.plot( xlim, [threshold, threshold], color = 'c', linestyle = '--' )
 				self.left.drawNodeSplits( fig, xlim, [ylim[0], threshold] )
 				self.right.drawNodeSplits( fig, xlim, [threshold, ylim[1]] )
-				
-			# if self.stump[0] == 0:
-				# plt.plot( [self.stump[1], self.stump[1]], ylim, color = 'c', linestyle = '--' )
-				# self.left.drawNodeSplits( fig, [xlim[0], self.stump[1]], ylim )
-				# self.right.drawNodeSplits( fig, [self.stump[1], xlim[1]], ylim )
-			# elif self.stump[0] == 1:
-				# plt.plot( xlim, [self.stump[1], self.stump[1]], color = 'c', linestyle = '--' )
-				# self.left.drawNodeSplits( fig, xlim, [ylim[0], self.stump[1]] )
-				# self.right.drawNodeSplits( fig, xlim, [self.stump[1], ylim[1]] )
 
 class Tree:
 	def __init__( self, maxLeafSize = 10, maxDepth = 5 ):
 		self.maxLeafSize = maxLeafSize
 		self.maxDepth = maxDepth
-		# self.featureStumps = featureStumps
 		self.root = Node()
 		
 	def predict( self, xt, yt ):
