@@ -62,22 +62,28 @@ def plotCurve( responseGenerator, fig, mode = "point", color = 'b', linestyle = 
 	if label:
 		plt.legend()
 
-def plot2D( X, fig, color = 'r', marker = '+', size = 100, empty = False ):
+def plot2D( X, fig, color = 'r', marker = '+', size = 100, empty = False, label = "" ):
 	plt.figure( fig.number )
 	if empty:
-		plt.scatter( X[:,0], X[:,1], s = size, facecolors = 'none', edgecolors = color, marker = marker )
+		plt.scatter( X[:,0], X[:,1], s = size, facecolors = 'none', edgecolors = color, marker = marker, label = label )
 	else:
-		plt.scatter( X[:,0], X[:,1], s = size, c = color, marker = marker )
+		plt.scatter( X[:,0], X[:,1], s = size, c = color, marker = marker, label = label )
+	if label:
+		plt.legend()
 
-def subplot2D( X, ax, color = 'r', marker = '+', size = 100, empty = False ):
+def subplot2D( X, ax, color = 'r', marker = '+', size = 100, empty = False, label = "" ):
 	if empty:
-		ax.scatter( X[:,0], X[:,1], s = size, facecolors = 'none', edgecolors = color, marker = marker )
+		ax.scatter( X[:,0], X[:,1], s = size, facecolors = 'none', edgecolors = color, marker = marker, label = label )
 	else:
-		ax.scatter( X[:,0], X[:,1], s = size, c = color, marker = marker )
+		ax.scatter( X[:,0], X[:,1], s = size, c = color, marker = marker, label = label )
+	if label:
+		plt.legend()
 
-def plot2DPoint( X, fig, color = 'r', marker = '+', size = 100 ):
+def plot2DPoint( X, fig, color = 'r', marker = '+', size = 100, label = "" ):
 	plt.figure( fig.number )
-	plt.scatter( X[0], X[1], s = size, c = color, marker = marker )
+	plt.scatter( X[0], X[1], s = size, c = color, marker = marker, label = label )
+	if label:
+		plt.legend()
 	
 def plotLine( w, b, fig, color = 'k', linestyle = "-", xlimL = -10, xlimR = 10, ylimD = -10, ylimU = 10, nBins = 500, label = "" ):
 	plt.figure( fig.number )
