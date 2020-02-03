@@ -34,7 +34,8 @@ def stepLengthGenerator( mode, eta ):
 # Given a gradient oracle and a steplength oracle, implement the gradient descent method
 # The method returns the final model and the objective value acheived by the intermediate models
 # This can be used to implement (mini-batch) SGD as well by simply modifying the gradient oracle
-def doGD( gradFunc, stepFunc, objFunc, init, horizon = 10, doModelAveraging = False ):
+# The postGradFunc can be used to implement projections or thresholding operations
+def doGD( gradFunc, stepFunc, objFunc, init, horizon = 10, doModelAveraging = False, postGradFunc = None ):
 	objValSeries = []
 	timeSeries = []
 	totTime = 0
@@ -46,6 +47,8 @@ def doGD( gradFunc, stepFunc, objFunc, init, horizon = 10, doModelAveraging = Fa
 		tic = t.perf_counter()
 		delta = gradFunc( theta, it + 1 )
 		theta = theta - stepFunc( it + 1 ) * delta
+		if postGradFunc is not None:
+			theta = postGradFunc( theta , it + 1 )
 		# If we are going to do model averaging, just keep adding the models
 		if doModelAveraging:
 			cumulative = cumulative + theta
