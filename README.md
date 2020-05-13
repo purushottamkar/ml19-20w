@@ -13,4 +13,4 @@ Purushottam Kar, IIT Kanpur [website](https://www.cse.iitk.ac.in/users/purushot/
 
 ## License
 
-This repository is licensed under the MIT License license - please see the [LICENSE](LICENSE) file for details.
+This repository is licensed under the MIT license - please see the [LICENSE](LICENSE) file for details.
